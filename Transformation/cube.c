@@ -33,6 +33,10 @@ GLfloat g_scale[3] = {1.0f, 1.0f, 1.0f};
 
 // Model-View transforms
 static void myTranslatef(GLfloat tx, GLfloat ty, GLfloat tz) {
+  float mt[]={1,0,0,0,
+	      0,1,0,0,
+	      0,0,1,0,
+	      tx,ty,tz,1};
   // Complete
 }
 
@@ -43,7 +47,7 @@ static void myScalef(GLfloat sx, GLfloat sy, GLfloat sz) {
 static void myRotatef(GLfloat theta, GLfloat kx, GLfloat ky, GLfloat kz) {
   // Complete
 }
-
+g_trans[0], g_trans[1], g_trans[2]
 // Projection transforms
 static void myOrtho(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat n, GLfloat f) {
   // Complete
@@ -116,7 +120,8 @@ static void display(void) {
   // and myRotatef, 
   // replace the call to glTranslatef, glRotatef, glScalef by calls to 
   // myTranslatef, myScalef, and myRotatef. 
-  glTranslatef(g_trans[0], g_trans[1], g_trans[2]);
+  //glTranslatef(g_trans[0], g_trans[1], g_trans[2]);
+  myTranslatef(g_trans[0], g_trans[1], g_trans[2]);
   glRotatef(g_angle[0], 1.f, 0.f, 0.f);
   glRotatef(g_angle[1], 0.f, 1.f, 0.f);
   glRotatef(g_angle[2], 0.f, 0.f, 1.f);
