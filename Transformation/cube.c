@@ -33,21 +33,35 @@ GLfloat g_scale[3] = {1.0f, 1.0f, 1.0f};
 
 // Model-View transforms
 static void myTranslatef(GLfloat tx, GLfloat ty, GLfloat tz) {
-  float mt[]={1,0,0,0,
+  float m[]={1,0,0,0,
 	      0,1,0,0,
 	      0,0,1,0,
 	      tx,ty,tz,1};
+  
+  glMultMatrixf(m);
   // Complete
 }
 
 static void myScalef(GLfloat sx, GLfloat sy, GLfloat sz) {
-  // Complete
-}
+    float m[]={sx,0,0,0,
+	      0,sy,0,0,
+	      0,0,sz,0,
+	      0,0,0,1};
 
-static void myRotatef(GLfloat theta, GLfloat kx, GLfloat ky, GLfloat kz) {
+     glMultMatrixf(m);
   // Complete
 }
-g_trans[0], g_trans[1], g_trans[2]
+//glMultMatrixf
+static void myRotatef(GLfloat theta, GLfloat kx, GLfloat ky, GLfloat kz) {
+  GLfloat rad=theta*(M_PI/180);
+    float m[]={kx*kx*(1-cos(rad))+cos(rad),ky*kx*(1-cos(rad))+kz*sin(rad),kz*kx*(1-cos(rad))-ky*sin(rad),0,
+	       kx*ky*(1-cos(rad))-kz*sin(rad),ky*ky*(1-cos(rad))+cos(rad),kz*ky*(1-cos(rad))+kx*sin(rad),0,
+	       kx*kz*(1-cos(rad))+ky*sin(rad),ky*kz*(1-cos(rad))-kx*sin(rad),kz*kz*(1-cos(rad))+cos(rad),0,
+	      0,0,0,1};
+    glMultMatrixf(m);
+  // Complete
+}
+//g_trans[0], g_trans[1], g_trans[2]
 // Projection transforms
 static void myOrtho(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat n, GLfloat f) {
   // Complete
@@ -57,7 +71,7 @@ static void myPerspective(GLfloat fovy, GLfloat aspect, GLfloat n, GLfloat f) {
   // Complete
 }
 
-static void drawCube(void) {
+static void drawCube(void) {//enType cos(
   GLfloat vertex[8][3] = { {-1.0f,-1.0f,-1.0f}, { 1.0f,-1.0f,-1.0f},
 			   { 1.0f, 1.0f,-1.0f}, {-1.0f, 1.0f,-1.0f},
 			   {-1.0f,-1.0f, 1.0f}, { 1.0f,-1.0f, 1.0f},
@@ -87,7 +101,7 @@ static void drawCube(void) {
   }
 }
 
-static void display(void) {
+static void display(void) {//-cos(rad)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Projection transformation
@@ -112,7 +126,7 @@ static void display(void) {
   glLoadIdentity();
   gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-
+  //-cos(rad)
   glPushMatrix();
 
   // Complete: 
@@ -122,17 +136,17 @@ static void display(void) {
   // myTranslatef, myScalef, and myRotatef. 
   //glTranslatef(g_trans[0], g_trans[1], g_trans[2]);
   myTranslatef(g_trans[0], g_trans[1], g_trans[2]);
-  glRotatef(g_angle[0], 1.f, 0.f, 0.f);
-  glRotatef(g_angle[1], 0.f, 1.f, 0.f);
-  glRotatef(g_angle[2], 0.f, 0.f, 1.f);
-  glScalef(g_scale[0], g_scale[1], g_scale[2]);
+  myRotatef(g_angle[0], 1.f, 0.f, 0.f);
+  myRotatef(g_angle[1], 0.f, 1.f, 0.f);
+  myRotatef(g_angle[2], 0.f, 0.f, 1.f);
+  myScalef(g_scale[0], g_scale[1], g_scale[2]);
   
   drawCube();
 
   glPopMatrix();
 
   glutSwapBuffers();
-}
+}//-cos(rad)
 
 static void reshape(int w, int h) {
   glViewport(0, 0, w, h);
