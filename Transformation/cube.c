@@ -34,40 +34,54 @@ GLfloat g_scale[3] = {1.0f, 1.0f, 1.0f};
 // Model-View transforms
 static void myTranslatef(GLfloat tx, GLfloat ty, GLfloat tz) {
   float m[]={1,0,0,0,
-	      0,1,0,0,
-	      0,0,1,0,
-	      tx,ty,tz,1};
+	     0,1,0,0,
+	     0,0,1,0,
+	     tx,ty,tz,1};
   
   glMultMatrixf(m);
   // Complete
 }
 
 static void myScalef(GLfloat sx, GLfloat sy, GLfloat sz) {
-    float m[]={sx,0,0,0,
-	      0,sy,0,0,
-	      0,0,sz,0,
-	      0,0,0,1};
+  float m[]={sx,0,0,0,
+	     0,sy,0,0,
+	     0,0,sz,0,
+	     0,0,0,1};
 
-     glMultMatrixf(m);
+  glMultMatrixf(m);
   // Complete
 }
 //glMultMatrixf
 static void myRotatef(GLfloat theta, GLfloat kx, GLfloat ky, GLfloat kz) {
   GLfloat rad=theta*(M_PI/180);
-    float m[]={kx*kx*(1-cos(rad))+cos(rad),ky*kx*(1-cos(rad))+kz*sin(rad),kz*kx*(1-cos(rad))-ky*sin(rad),0,
-	       kx*ky*(1-cos(rad))-kz*sin(rad),ky*ky*(1-cos(rad))+cos(rad),kz*ky*(1-cos(rad))+kx*sin(rad),0,
-	       kx*kz*(1-cos(rad))+ky*sin(rad),ky*kz*(1-cos(rad))-kx*sin(rad),kz*kz*(1-cos(rad))+cos(rad),0,
-	      0,0,0,1};
-    glMultMatrixf(m);
+  float m[]={kx*kx*(1-cos(rad))+cos(rad),ky*kx*(1-cos(rad))+kz*sin(rad),kz*kx*(1-cos(rad))-ky*sin(rad),0,
+	     kx*ky*(1-cos(rad))-kz*sin(rad),ky*ky*(1-cos(rad))+cos(rad),kz*ky*(1-cos(rad))+kx*sin(rad),0,
+	     kx*kz*(1-cos(rad))+ky*sin(rad),ky*kz*(1-cos(rad))-kx*sin(rad),kz*kz*(1-cos(rad))+cos(rad),0,
+	     0,0,0,1};
+  glMultMatrixf(m);
   // Complete
 }
 //g_trans[0], g_trans[1], g_trans[2]
 // Projection transforms
 static void myOrtho(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat n, GLfloat f) {
+  float m[]={2/(right-left),0,0,0,
+	     0,2/(top-bottom),0,0,
+	     0,0,2/(n-f),0,
+	     (-right-left)/(right-left),(-top-bottom)/(top-bottom),(f+n)/(n-f),1};
+  glMultMatrixf(m);
   // Complete
 }
 
 static void myPerspective(GLfloat fovy, GLfloat aspect, GLfloat n, GLfloat f) {
+  GLfloat left=-tan(fovy/2)*n*aspect;
+  GLfloat right=tan(fovy/2)*n*aspect;
+  GLfloat bottom=-tan(fovy/2)*n;
+  GLfloat top=tan(fovy/2)*n;
+  float m[]={(2*n)/(right-left),0,0,0,
+	     0,(2*n)/(top-bottom),0,0,
+	     (right+left)/(right-left),(top+bottom)/(top-bottom),(-f-n)/(f-n),-1,
+	     0,0,(-2*f*n)/(f-n),0};
+  glMultMatrixf(m);
   // Complete
 }
 
@@ -112,13 +126,13 @@ static void display(void) {//-cos(rad)
     // Complete: 
     // After completing the code of myPerspective() above, 
     // replace the call to gluPerspective with a call to myPerspective
-    gluPerspective(45.0, (GLdouble)g_width / (GLdouble)g_height, 0.1, 20.0);
+    myPerspective(45.0, (GLdouble)g_width / (GLdouble)g_height, 0.1, 20.0);
   }
   else {
     // Complete: 
     // After completing the code of myOrtho() above, 
     // replace the call to glOrtho with a call to myOrtho
-    glOrtho(-2.0, 2.0, -2.0, 2.0, -10.0, 10.0);
+    myOrtho(-2.0, 2.0, -2.0, 2.0, -10.0, 10.0);
   }
 
   // Modelview transformation
