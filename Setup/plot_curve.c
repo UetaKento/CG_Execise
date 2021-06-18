@@ -48,6 +48,7 @@ static void display(void) {
   glBegin(GL_LINE_STRIP);
   //glVertex3f(0.2f,0.2f,0.f);
   //glVertex3f(0.45f,0.5f,0.f);
+  //glVertex3f(0.45f,0.5f,0.f);
   for (i = 0; i < N; ++i) {
     glVertex2f(x_coords[i],y_values[i]);
   }
