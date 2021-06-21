@@ -155,6 +155,14 @@ static void solidSphere(GLfloat r, int nu, int nv) {
 	// as well as its color c00, c01, c11, c10
 	//
 	//
+	glColor3fv(c00);
+	glVertex3f(v00x,v00y,v00z);
+	glColor3fv(c01);
+	glVertex3f(v01x,v01y,v01z);
+	glColor3fv(c11);
+	glVertex3f(v11x,v11y,v11z);
+	glColor3fv(c10);
+	glVertex3f(v10x,v10y,v10z);
 	glEnd();
       }
     }
