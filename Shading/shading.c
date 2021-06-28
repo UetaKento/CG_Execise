@@ -60,6 +60,7 @@ static void PhongModel(GLfloat* pe, GLfloat* ne, GLfloat* out_color) {
   out_color[1] = 0.f;
   out_color[2] = 0.f;
 
+  
   int i;
 
   
@@ -67,9 +68,62 @@ static void PhongModel(GLfloat* pe, GLfloat* ne, GLfloat* out_color) {
   // Implement the Phong model here.
   // Follow the slides of lecture 4 (p. 4, 6-7, 13-14, 20).
   // You can implement either Phong (p. 13) or Blinn (p. 15). 
-  // Ignore the attenuation (p. 18). 
-
+  // Ignore the attenuation (p. 18).
   
+  out_color[0] += g_mat_amb[0]*g_light_amb[0][0];
+  out_color[1] += g_mat_amb[1]*g_light_amb[0][1];
+  out_color[2] += g_mat_amb[2]*g_light_amb[0][2];
+
+  GLfloat pe_v[3], pe_leng = 0.f, pro = 0.f;
+  GLfloat cos_p = 0.f, val[3], phi_mat = 0.f, val_leng, L[3], L_leng;
+  /*
+    Ia0+=g_mat_amb[0]*g_num_lights[][];
+    Ia1+=g_mat_amb[1]*g_num_lights[][];
+    Ia2+=g_mat_amb[2]*g_num_lights[][];
+  */
+
+  pe_v[0] = g_light_pos[0][0] - pe[0];
+  pe_v[1] = g_light_pos[0][1] - pe[1];
+  pe_v[2] = g_light_pos[0][2] - pe[2];
+  
+  pe_leng = sqrt(pe_v[0]*pe_v[0] + pe_v[1]*pe_v[1] + pe_v[2]*pe_v[2]);
+  
+  pro += ne[0]*(pe_v[0]/pe_leng);
+  pro += ne[1]*(pe_v[1]/pe_leng);
+  pro += ne[2]*(pe_v[2]/pe_leng);
+
+  out_color[0] +=  g_mat_diff[0]*g_light_diff[0][0]*fmaxf(pro,0.0f);
+  out_color[1] +=  g_mat_diff[1]*g_light_diff[0][1]*fmaxf(pro,0.0f);
+  out_color[2] +=  g_mat_diff[2]*g_light_diff[0][2]*fmaxf(pro,0.0f);
+
+  /* 
+     g_light_pos[MAX_NUM_LIGHTS][0]-pe[0];
+
+     Id0=g_mat_diff[0]*fmaxf(ne[0]*);
+     g_mat_spec[4];
+  */
+  val[0] = pe[0];
+  val[1] = pe[1];
+  val[2] = pe[2] - 10;
+  val_leng = sqrt(val[0]*val[0] + val[1]*val[1] + val[2]*val[2]);
+  
+  L[0] = (pe_v[0]/pe_leng) - 2*(ne[0]*pro);
+  L[1] = (pe_v[1]/pe_leng) - 2*(ne[1]*pro);
+  L[2] = (pe_v[2]/pe_leng) - 2*(ne[2]*pro);
+
+  L_leng = sqrt(L[0]*L[0] + L[1]*L[1] + L[2]*L[2]);
+  
+  cos_p += (L[0]/L_leng)*(val[0]/val_leng);
+  cos_p += (L[1]/L_leng)*(val[1]/val_leng);
+  cos_p += (L[2]/L_leng)*(val[2]/val_leng);
+
+  cos_p = fmaxf(cos_p,0.f);
+  phi_mat = pow(cos_p,g_mat_shiny);
+
+  out_color[0] += g_mat_spec[0]*g_light_spec[0][0]*phi_mat;
+  out_color[1] += g_mat_spec[1]*g_light_spec[0][1]*phi_mat;
+  out_color[2] += g_mat_spec[2]*g_light_spec[0][2]*phi_mat;
+    
   out_color[0] = fminf(fmaxf(out_color[0], 0.0f), 1.f);
   out_color[1] = fminf(fmaxf(out_color[1], 0.0f), 1.f);
   out_color[2] = fminf(fmaxf(out_color[2], 0.0f), 1.f);
