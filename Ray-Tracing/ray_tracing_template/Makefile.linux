@@ -1,0 +1,11 @@
+C = gcc
+
+LDLIBS = -lglut -lGL -lGLU -lX11 -lm
+
+all: rtviewer
+
+rtviewer: MainGL.c Scene.h Scene.c Geometry.h Geometry.c RayTrace.h RayTrace.c
+	$(C) -O3 -o rtviewer MainGL.c Scene.c Geometry.c RayTrace.c $(LDLIBS)
+
+clean:
+	rm rtviewer 

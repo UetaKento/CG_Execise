@@ -1,0 +1,13 @@
+C = gcc
+
+LDLIBS = -lglut -lGL -lGLU -lXmu -lX11  -lm
+INC_PATH = /usr/local/include
+LIB_PATH = /usr/local/lib
+
+all: rtviewer
+
+rtviewer: MainGL.c Scene.h Scene.c Geometry.h Geometry.c RayTrace.h RayTrace.c
+	$(C) -O3 -I$(INC_PATH) -o rtviewer MainGL.c Scene.c Geometry.c RayTrace.c -L$(LIB_PATH) $(LDLIBS)
+
+clean:
+	rm rtviewer 

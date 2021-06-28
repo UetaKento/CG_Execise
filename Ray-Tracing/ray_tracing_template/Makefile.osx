@@ -1,0 +1,8 @@
+all: rtviewer
+
+rtviewer: MainGL.c Scene.h Scene.c Geometry.c Geometry.h RayTrace.c RayTrace.h
+	gcc -O3 -Wno-deprecated-declarations -framework GLUT -framework OpenGL -o rtviewer MainGL.c Scene.c Geometry.c RayTrace.c
+
+clean:
+	rm rtviewer 
+
