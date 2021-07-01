@@ -14,7 +14,9 @@
 
 
 // Initialize the image with the background color specified as input.
+// inputで指定した背景色で画像を初期化します。
 // width and height corresponds to the dimension of the image.
+// width と height は画像の大きさに対応します。
 static void
 initImageWithBackground(Color background_color, Color** image,
 			int width, int height)
@@ -31,7 +33,8 @@ initImageWithBackground(Color background_color, Color** image,
 }
 
 
-// Clamp c's entries between m and M. 
+// Clamp c's entries between m and M.
+// mとMの間でcのエントリーをクランプする。
 static void clamp(Color* c, float m, float M) {
   c->_red = fminf(fmaxf(c->_red, m), M);
   c->_green = fminf(fmaxf(c->_green, m), M);
@@ -40,27 +43,42 @@ static void clamp(Color* c, float m, float M) {
 
 
 // Complete
-// Given a ray (origin, direction), check if it intersects a given
-// sphere.
+// Given a ray (origin, direction), check if it intersects a given sphere.
+// 与えられた光線（原点、方向）が、与えられた球体と交差するかどうかをチェックします。
 // Return 1 if there is an intersection, 0 otherwise.
+// 交差している場合は 1 を，そうでない場合は 0 を返します．
 // *t contains the distance to the closest intersection point, if any.
+// *t には、最も近い交点がある場合はその距離が入ります。
 static int
 hitSphere(Vector3 origin, Vector3 direction, Sphere sphere, float* t)
 {
+    float od;
+    float o2;
+    //float Point_along_ray = origin + t * direction;
+    computeDotProduct(origin, direction, &od);
+    computeDotProduct(origin, origin, &o2);
+    t = -od + -sqrtf((od * od) - o2 + sphere._radius);
+    
   return 0;
 }
 
 
 // Check if the ray defined by (scene._camera, direction) is intersecting
 // any of the spheres defined in the scene.
+// (scene._camera, direction)で定義されたレイが、シーンで定義された球体のどれかと交差しているかどうかをチェックします。
 // Return 0 if there is no intersection, and 1 otherwise.
+// 交差していない場合は 0 を，そうでない場合は 1 を返します。
 //
 // If there is an intersection:
-// - the position of the intersection with the closest sphere is computed 
+// 交差している場合。
+// - the position of the intersection with the closest sphere is computed
 // in hit_pos
+// - 最も近い球体との交点の位置はhit_posで計算されます。
 // - the normal to the surface at the intersection point in hit_normal
+// 交差点における表面の法線 (hit_normal)
 // - the diffuse color and specular color of the intersected sphere
 // in hit_color and hit_spec
+// - 交差した球体の拡散色と鏡面色をhit_colorとhit_specで指定します。
 static int
 hitScene(Vector3 origin, Vector3 direction, Scene scene,
 	 Vector3* hit_pos, Vector3* hit_normal,
@@ -98,6 +116,7 @@ hitScene(Vector3 origin, Vector3 direction, Scene scene,
   mulAV(1.0f / hit_sph._radius, n, hit_normal);
 
   // Save the color of the intersected sphere in hit_color and hit_spec
+  // 交差した球体の色をhit_colorとhit_specに保存する
   *hit_color = hit_sph._color;
   *hit_spec = hit_sph._color_spec;
   
@@ -106,8 +125,11 @@ hitScene(Vector3 origin, Vector3 direction, Scene scene,
 
 
 // Save the image in a raw buffer (texture)
-// The memory for texture is allocated in this function. It needs to 
-// be freed in the caller.
+// 画像を生のバッファ（テクスチャ）に保存する
+// The memory for texture is allocated in this function. It needs to be freed in the caller.
+// texture用のメモリはこの関数で割り当てられます。呼び出し元で解放される必要があります。
+
+
 static void saveRaw(Color** image, int width, int height, GLubyte** texture) {
   int count = 0;
   int i;
@@ -139,7 +161,11 @@ static void saveRaw(Color** image, int width, int height, GLubyte** texture) {
 // and the color (diffuse and specular) terms at the intersection point,
 // compute the colot intensity at the point by applying the Phong
 // shading model.
+// 交差点(hit_pos)が与えられます。交差点における表面への法線（hit_normal），
+// および交差点における色（拡散および鏡面）の項が与えられた場合，
+// Phongシェーディングモデル を適用して，その点における色の強度を計算します．
 // Return the color intensity in *color.
+//  カラー強度を *color で返します。
 static void
 shade(Vector3 hit_pos, Vector3 hit_normal,
       Color hit_color, Color hit_spec, Scene scene, Color* color)
@@ -154,6 +180,7 @@ shade(Vector3 hit_pos, Vector3 hit_normal,
     // Complete
     // Form a shadow ray and check if the hit point is under
     // direct illumination from the light source
+    // 影の光線を形成し、ヒットポイントが光源から直接照明を受けているかどうかをチェックする
 
 
     // Complete
