@@ -52,14 +52,23 @@ static void clamp(Color* c, float m, float M) {
 static int
 hitSphere(Vector3 origin, Vector3 direction, Sphere sphere, float* t)
 {
-    float od;
-    float o2;
+    Vector3 oc;
+    float ocd;
+    float oc2;
+    float r;
     //float Point_along_ray = origin + t * direction;
-    computeDotProduct(origin, direction, &od);
-    computeDotProduct(origin, origin, &o2);
-    t = -od + -sqrtf((od * od) - o2 + sphere._radius);
+    sub(origin, sphere._center, &oc);
+    computeDotProduct(oc, direction, &ocd);
+    computeNorm(oc, &oc2);
     
-  return 0;
+    r = -ocd + -sqrtf((ocd * ocd) - (oc2 * oc2) + (sphere._radius) * (sphere._radius));
+    if(r > 0){
+        *t = r;
+        return 1;
+    }else{
+        *t = 0;
+        return 0;
+    }
 }
 
 
@@ -170,26 +179,44 @@ static void
 shade(Vector3 hit_pos, Vector3 hit_normal,
       Color hit_color, Color hit_spec, Scene scene, Color* color)
 {
+    float r,f1,f2;
+    float flash = 100;
+    Vector3 v1,v2,light;
   // Complete
   // ambient component
-
-
+    color->_red = scene._ambient._red * hit_color._red;
+    color->_green = scene._ambient._green * hit_color._green;
+    color->_blue = scene._ambient._blue * hit_color._blue;
    // for each light in the scene
-  int l;
-  for (l = 0; l < scene._number_lights; l++) {
+    //computeDotProduct(normalize(hit_pos), normalize(hit_normal), r)
+  int i = 5;
+  for (int i = 0; i < scene._number_lights; i++) {
     // Complete
     // Form a shadow ray and check if the hit point is under
     // direct illumination from the light source
     // 影の光線を形成し、ヒットポイントが光源から直接照明を受けているかどうかをチェックする
-
+      sub(scene._lights[i]._light_pos, hit_pos, &light);
+      //if(hitScene(hit_pos,light,scene,&shadow_pos,&shadow_normal,&shadow_color,&shadow_spec)==0){
 
     // Complete
     // diffuse component
-
-
+      normalize(hit_pos, &hit_pos);
+      normalize(hit_normal, &hit_normal);
+      computeDotProduct(hit_pos, hit_normal, &r);
+      color->_red += hit_color._red * scene._lights[i]._light_color._red * fmaxf(r,0.0f);
+      color->_green += hit_color._green * scene._lights[i]._light_color._green * fmaxf(r,0.0f);
+      color->_blue += hit_color._blue * scene._lights[i]._light_color._blue * fmaxf(r,0.0f);
     // Complete
     // specular component
-
+      v1._x=-light._x + 2* hit_normal._x * r;
+      v1._y=-light._y + 2* hit_normal._y * r;
+      v1._z=-light._z + 2* hit_normal._z * r;
+          
+      computeDotProduct(v1,v2,&f1);
+      f2=pow(fmaxf(f1,0.0f),flash);
+      color->_red +=hit_spec._red * scene._lights[i]._light_color._red * f2;
+      color->_blue +=hit_spec._blue * scene._lights[i]._light_color._blue * f2;
+      //}
   }
 }
 
