@@ -174,6 +174,21 @@ void computeTriangleNormals(TriangleMesh* tri_mesh)
 {
   // Complete
   // Compute the normal at each triangle. Use p. 27 from the slides
+
+    Vector3 p2p1, p3p1, crosspro;
+    int v0, v1, v2, i;
+    
+    tri_mesh->_triangle_normals = (Vector3*) malloc(tri_mesh->_number_triangles * sizeof(Vector3));
+    
+    for(i = 0;i < tri_mesh->_number_triangles; i++){
+        v0 = tri_mesh->_triangles[i]._v0;
+        v1 = tri_mesh->_triangles[i]._v1;
+        v2 = tri_mesh->_triangles[i]._v2;
+        sub(tri_mesh->_vertices[v1], tri_mesh->_vertices[v0], &p2p1);
+        sub(tri_mesh->_vertices[v2], tri_mesh->_vertices[v0], &p3p1);
+        computeCrossProduct(p2p1, p3p1, &crosspro);
+        normalize(crosspro, &tri_mesh->_triangle_normals[i]);
+    }
 }
 
 
@@ -183,6 +198,27 @@ void computeVertexNormals(TriangleMesh* tri_mesh)
 {
   // Complete
   // Compute the normal at each vertex. Use p. 29-31 from the slides
+    Vector3 *weisig;
+    int v0, v1, v2, i, triangles;
+    
+    tri_mesh->_vertex_normals = (Vector3*) malloc(tri_mesh->_number_triangles * sizeof(Vector3));
+    weisig = (Vector3*)malloc(tri_mesh->_number_vertices * sizeof(Vector3));
+    
+    for( i = 0; i < tri_mesh->_number_triangles; i++ ){
+
+      v0 = tri_mesh->_triangles[i]._v0;
+      v1 = tri_mesh->_triangles[i]._v1;
+      v2 = tri_mesh->_triangles[i]._v2;
+
+      add(weisig[v0], tri_mesh->_triangle_normals[i], &weisig[v0]);
+      add(weisig[v1], tri_mesh->_triangle_normals[i], &weisig[v1]);
+      add(weisig[v2], tri_mesh->_triangle_normals[i], &weisig[v2]);
+    }
+    
+    for( i = 0; i < tri_mesh->_number_vertices; i++ ){
+      normalize(weisig[i], &tri_mesh->_vertex_normals[i]);
+    }
+
 }
 
 
@@ -367,4 +403,46 @@ void heatStep(TriangleMesh* tri_mesh) {
   // Complete
   // Try to implement the mesh smoothing method described on p. 40-43 of the slides. 
   // The umbrella operator (p. 42) is sufficient here.
+    int i, j;
+    double lumda = 0.5;
+    Vector3 *Lv;
+    
+    Lv = (Vector3*)malloc(tri_mesh->_number_vertices * sizeof(Vector3));
+    
+    for( i = 0; i < tri_mesh->_number_vertices; i++){
+      Lv[i]._x=0;
+      Lv[i]._y=0;
+      Lv[i]._z=0;
+    }
+    
+    for( i = 0; i < tri_mesh->_number_vertices; i++ ){
+      int neighbors = getNumberAdjacentVertices(tri_mesh, i);
+        // Loop through each neighbor
+
+      for (j = 0; j < neighbors; ++j) {
+        // Index in the vertex list of the j-th neighbor to the vertex i
+        int vj = getAdjacentVertex(tri_mesh, i, j);
+
+        // Get the coordinates of this vertex
+        Vector3 pj = tri_mesh->_vertices[vj];
+        Lv[i]._x += pj._x;
+        Lv[i]._y += pj._y;
+        Lv[i]._z += pj._z;
+
+
+      }
+
+      Lv[i]._x = Lv[i]._x/neighbors - tri_mesh->_vertices[i]._x;
+      Lv[i]._y = Lv[i]._y/neighbors - tri_mesh->_vertices[i]._y;
+      Lv[i]._z = Lv[i]._z/neighbors - tri_mesh->_vertices[i]._z;
+
+      tri_mesh->_vertices[i]._x = tri_mesh->_vertices[i]._x + Lv[i]._x * lumda;
+      tri_mesh->_vertices[i]._y = tri_mesh->_vertices[i]._y + Lv[i]._y * lumda;
+      tri_mesh->_vertices[i]._z = tri_mesh->_vertices[i]._z + Lv[i]._z * lumda;
+
+
+    }
+    
+    computeTriangleNormals(tri_mesh);
+    computeVertexNormals(tri_mesh);
 }
