@@ -1,0 +1,4 @@
+CC = gcc 
+
+.c:
+	$(CC) -I./ -Wno-deprecated-declarations -framework GLUT -framework OpenGL $@.c glew.c -o $@
