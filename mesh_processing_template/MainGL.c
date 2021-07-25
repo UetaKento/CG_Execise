@@ -183,19 +183,91 @@ void display(void)
   // draw the triangle mesh in either flat shading mode
   // or smooth shading mode, 
   // depending on the value of the flag g_flat
-  if (g_flat) {
+    /*
+     フラグg_flatの値に応じて、フラットシェーディングモードまたは
+     スムースシェーディングモードで三角形のメッシュを描画する。
+     */
+    if (g_flat) {
+        
+        // Complete
+        // draw the triangle mesh in flat shading mode
+        // フラットシェーディングモードで三角形のメッシュを描く
+        
+        int i;
+        int triangles = g_tri_mesh._number_triangles;
+        
+        for(i = 0; i < triangles; ++i){
+            
+            int v0, v1, v2;
+            Vector3 p0, p1, p2;
+            Vector3 n0, n1, n2;
+            
+            
+            v0 = g_tri_mesh._triangles[i]._v0;
+            v1 = g_tri_mesh._triangles[i]._v1;
+            v2 = g_tri_mesh._triangles[i]._v2;
+            
+            n0 = g_tri_mesh._vertex_normals[v0];
+            n1 = g_tri_mesh._vertex_normals[v1];
+            n2 = g_tri_mesh._vertex_normals[v2];
+            
+            p0 = g_tri_mesh._vertices[v0];
+            p1 = g_tri_mesh._vertices[v1];
+            p2 = g_tri_mesh._vertices[v2];
+            
+            glShadeModel(GL_FLAT);
+            glBegin(GL_TRIANGLES);
+            glNormal3f(n0._x, n0._y, n0._z);
+            glVertex3f(p0._x, p0._y, p0._z);
+            glNormal3f(n1._x, n1._y, n1._z);
+            glVertex3f(p1._x, p1._y, p1._z);
+            glNormal3f(n2._x, n2._y, n2._z);
+            glVertex3f(p2._x, p2._y, p2._z);
+            glEnd();
+        }
+        
+    } else {
+            
+            // Complete
+            // draw the triangle mesh in smooth shading mode
+        int i;
+        int triangles = g_tri_mesh._number_triangles;
 
-    // Complete
-    // draw the triangle mesh in flat shading mode
 
-  } else {
+        for(i = 0; i < triangles; ++i){
 
-    // Complete
-    // draw the triangle mesh in smooth shading mode
 
-  }
+          int v0, v1, v2;
+          Vector3 p0, p1, p2;
+          Vector3 n0, n1, n2;
 
-  glutSwapBuffers();
+          v0 = g_tri_mesh._triangles[i]._v0;
+          v1 = g_tri_mesh._triangles[i]._v1;
+          v2 = g_tri_mesh._triangles[i]._v2;
+
+          n0 = g_tri_mesh._vertex_normals[v0];
+          n1 = g_tri_mesh._vertex_normals[v1];
+          n2 = g_tri_mesh._vertex_normals[v2];
+
+          p0 = g_tri_mesh._vertices[v0];
+          p1 = g_tri_mesh._vertices[v1];
+          p2 = g_tri_mesh._vertices[v2];
+
+          glShadeModel(GL_SMOOTH);
+          glBegin(GL_TRIANGLES);
+          glNormal3f(n0._x, n0._y, n0._z);
+          glVertex3f(p0._x, p0._y, p0._z);
+          glNormal3f(n1._x, n1._y, n1._z);
+          glVertex3f(p1._x, p1._y, p1._z);
+          glNormal3f(n2._x, n2._y, n2._z);
+          glVertex3f(p2._x, p2._y, p2._z);
+          glEnd();
+            
+        }
+        
+        //glutSwapBuffers();
+    }
+    glutSwapBuffers();
 }
 
 
