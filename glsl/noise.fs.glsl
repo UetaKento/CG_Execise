@@ -41,43 +41,56 @@ vec3 noisemap(in vec3 p) {
 
 
 void main(){
-  // light position in eye space
-  vec4 light2 = vec4(10.0, 5.0, 1.0, 1.0);
-
-  // vertex in eye space
-  vec4 V = oPosition;
-
-  // normal in eye space
-  vec4 N = oNormal;
-
-  // apply a (pseudo-random) perturbation to the normal
-  N.xyz = noisemap(N.xyz);
-  N.w = 0.0;
-  N = normalize(N);
-
-  // material
-  vec4 amb = vec4(0.1, 0.1, 0.1, 1.0);
-  vec4 diff = vec4(1.4, 0.7, 0.6, 1.0);
-  vec4 spec = vec4(1.0, 1.0, 1.0, 1.0);
-  float shiny = 16.0;
-  
-  // light color
-  vec4 lcol = vec4(1.0, 1.0, 1.0, 1.0);
-  
-  // Complete
-  // Phong shading model
-  // 
-
-  // Complete
-  // compute the vector vertex (V) to light direction
-
-  // Complete
-  // reflected light direction
-
-  // Complete
-  // Apply the Phong lighting model
-
-  // Complete
-  // Save the final color in gl_FragColor
-  gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
+    vec4 Light;
+    vec4 Diffuse;
+    vec4 Reflect;
+    vec4 View;
+    float Specular;
+    
+    // light position in eye space
+    vec4 light2 = vec4(10.0, 5.0, 1.0, 1.0);
+    
+    // vertex in eye space
+    vec4 V = oPosition;
+    
+    // normal in eye space
+    vec4 N = oNormal;
+    
+    // apply a (pseudo-random) perturbation to the normal
+    N.xyz = noisemap(N.xyz);
+    N.w = 0.0;
+    N = normalize(N);
+    
+    // material
+    vec4 amb = vec4(0.1, 0.1, 0.1, 1.0);
+    vec4 diff = vec4(1.4, 0.7, 0.6, 1.0);
+    vec4 spec = vec4(1.0, 1.0, 1.0, 1.0);
+    float shiny = 16.0;
+    
+    // light color
+    vec4 lcol = vec4(1.0, 1.0, 1.0, 1.0);
+    
+    // Complete
+    // Phong shading model
+    Light = normalize(light2 - V);
+    
+    // Complete
+    // compute the vector vertex (V) to light direction
+    Diffuse = diff * max(0.0, dot(N, Light));
+    
+    // Complete
+    // reflected light direction
+    Reflect = reflect(-Light, N);
+    View = normalize(-V);
+    
+    // Complete
+    // Apply the Phong lighting model
+    
+    Specular = max(dot(View, Reflect), 0.0);
+    Specular = pow(Specular, shiny);
+    
+    // Complete
+    // Save the final color in gl_FragColor
+    //gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
+    gl_FragColor = Diffuse + spec * Specular + amb;
 }

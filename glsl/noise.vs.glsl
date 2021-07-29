@@ -22,23 +22,26 @@ uniform mat4 PMatrix;
 
 void main()
 {
-  // Complete
-  // compute the vertex position in clip space
-  // (i.e. multiply vPosition by the projection matrix
-  // and the model-view matrix).
-  // Save the result in gl_Position
-
-
-  // Complete
-  // compute the vertex in eye space (i.e. multiply vPosition by the
-  // model view matrix).
-  // Save the result in oPosition
-
-
-  // Complete
-  // compute the normal in eye space (i.e. multiply vNormal by the
-  // normal matrix).
-  // Save the result in oNormal
-
-  
+    vec4 Normal;
+    // Complete
+    // compute the vertex position in clip space
+    // (i.e. multiply vPosition by the projection matrix
+    // and the model-view matrix).
+    // Save the result in gl_Position
+    gl_Position = PMatrix * MVMatrix * vPosition;
+    
+    // Complete
+    // compute the vertex in eye space (i.e. multiply vPosition by the
+    // model view matrix).
+    // Save the result in oPosition
+    Normal = NormalMatrix * vNormal;
+    Normal.w = 0.0;
+    oPosition = MVMatrix * vPosition;
+    
+    // Complete
+    // compute the normal in eye space (i.e. multiply vNormal by the
+    // normal matrix).
+    // Save the result in oNormal
+    oNormal = normalize(Normal);
+    
 }
