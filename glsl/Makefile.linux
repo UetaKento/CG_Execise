@@ -1,0 +1,7 @@
+CC = gcc 
+
+#LDLIBS = -lglut -lGL -lGLU -lX11 -lm -lGLEW
+LDLIBS = -lglut -lGL -lGLU -lX11 -lm
+
+.c:
+	$(CC) -I./ $@.c glew.c $(LDLIBS) -o $@

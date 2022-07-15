@@ -1,0 +1,8 @@
+all: mesh_processing
+
+mesh_processing: MainGL.c Geometry.c Geometry.h TriangleMesh.h TriangleMesh.c 
+	gcc -O3 -Wno-deprecated-declarations -framework GLUT -framework OpenGL -o mesh_processing MainGL.c Geometry.c TriangleMesh.c 
+
+clean:
+	rm mesh_processing 
+

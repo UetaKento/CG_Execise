@@ -1,0 +1,12 @@
+C = gcc
+
+LDLIBS = -lglut -lGL -lGLU -lX11 -lm
+
+all: mesh_processing
+
+mesh_processing: MainGL.c Geometry.h Geometry.c TriangleMesh.h TriangleMesh.c
+	$(C) -O3 -o mesh_processing MainGL.c Geometry.c TriangleMesh.c $(LDLIBS)
+
+clean:
+	rm mesh_processing
+
